@@ -1,0 +1,637 @@
+/* 🎯 إعدادات عامة للصفحة */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  direction: rtl;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+/* 🧱 تنسيق شريط التبويبات في الاعلى */
+#tabContainer {
+  display: flex;/*متمدد*/
+  flex-wrap: nowrap;/*يمنع الانتقال لسطر جديد*/
+  overflow: hidden; /* سنجعل التمرير داخل حاوية داخلية */
+  gap: 6px;/*المسافة بين الازرار(غلط)*/
+  padding: 10px;/*موقع الزرار بالنسبة للاطار الموجودين ضمنه*/
+  background-color: #fff;/*لون خلفية الزر*/
+  border-bottom: 1px solid #ddd;/*حدود الزر الخارجية*/
+  position: sticky;/*تثبيت شريط اللوحات في الاعلى*/
+  top: 0;
+  background-color: #fff;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  z-index: 100;/* نضمن انه فوق العناصر*/
+}
+/* الحاوية الداخلية القابلة للتمرير للتبويبات فقط */
+.tabs-scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 2px;      /*تباعد ازرار القائمة الرئيسية*/
+  flex: 1 1 auto;
+  -ms-overflow-style: none; /* إخفاء شريط التمرير في IE/Edge القديم */
+  scrollbar-width: none;    /* إخفاء شريط التمرير في Firefox */
+}
+
+/* إخفاء شريط التمرير في متصفحات WebKit (Chrome/Safari/Opera) */
+.tabs-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+.tabs-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* دفع زر الاعدادات لنهاية الشريط وفصله بصريًا */
+.settings-tab {
+  margin-inline-start: auto; /* يدفعه إلى نهاية الشريط */
+  background-color: #f7f7f7;
+  border-color: #ddd;
+  position: sticky; /* تثبيت بصري داخل الشريط */
+  right: 0; /* يلتصق بحافة الشريط اليمنى */
+  z-index: 5; /* فوق بقية الأزرار عند التمرير */
+  box-shadow: -6px 0 6px -6px rgba(0,0,0,0.08); /* فصل بصري خفيف */
+}
+
+/* زر التبويب اول ازرار */
+.tab-btn {
+  flex: 1 0 auto;/* يجعل الزر يتقلص حسب الحاجة */
+  min-width: 50px;
+  max-width: 100px;
+  padding: 6px 12px;
+  font-size: var(--tab-font-size, 14px); /* حجم أسماء اللوحات (قابل للتعديل) */
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+/* عند المرور */
+.tab-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* التبويب النشط */
+.tab-btn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+/* ✍️ تنسيق مربع الإدخال الرئيسي */
+#newNoteInput {
+  font-size: var(--input-font-size, 14px);    /* ✍️ حجم خط مربع الإدخال الرئيسي قابل للتعديل */
+  line-height: 1.5;
+  min-height: 80px;
+  max-height: 200px;
+  overflow-y: auto;
+  /* تحسين للجوال */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* تنسيق الصور داخل مربع الإدخال والملاحظات*/
+#newNoteInput img {
+  max-width: 20%;
+  height: auto;
+  border-radius: 6px;
+  margin: 4px 2px;
+  display: inline-block;
+  vertical-align: top;
+  float: left;
+  clear: none;
+}
+
+/* تنسيق النص في مربع الإدخال عند وجود صور */
+#newNoteInput:has(img) {
+  display: block;
+}
+
+/* مكان تباعد الملاحظات (المسافة بين بطاقات الملاحظات) */
+.note-box {
+  padding: 8px 10px 8px 0px; /* مساواة الحشوة العلوية والسفلية لضبط المحاذاة العمودية */
+  border-radius: 8px;
+  margin-bottom: 5px; /* زيادة للمسافة بين الملاحظات لتجنب الانضغاط(غيرصحيح) */
+  position: relative;
+  overflow: hidden; /* منع تجاوز المحتوى */
+  text-align: left;
+}
+
+/* زر قائمة نسخ ,تحرير مطلق التموضع أسفل يسار، لا يزيد ارتفاع الصندوق */
+.note-box > .relative {
+  position: absolute;
+  bottom: 2px; /* تقريب الزر من الحافة السفلية */
+  left: 2px;  /* تقريب الزر من الحافة الجانبية */
+  right: auto;
+  top: auto;
+  margin-top: 0;
+  font-size: 17px;
+  z-index: 10;
+}
+
+/* تصغير زر القائمة ليقترب من الحافة بدون فراغات كبيرة */
+.menu-toggle {
+  padding: 2px 4px; /* زر صغير وملاصق تقريبًا */
+
+}
+
+/* إعدادات عامة للنص داخل الملاحظة دون قص افتراضي */
+.note-box span {
+  line-height: 1.5;
+  white-space: pre-line;
+  display: block;
+}
+
+/* تنسيق الصور داخل الملاحظات المحفوظة */
+.note-box img {
+  max-width: 20%;
+  height: auto;
+  border-radius: 6px;
+  margin: 4px 2px;
+  display: inline-block;
+  vertical-align: top;
+  clear: none;
+}
+
+/* تطبيق نفس فئات التموضع على صور الملاحظات - صور على اليمين */
+.note-box img.float-right {
+  float: right;
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+.note-box img.float-left {
+  float: left;
+  margin-right: 8px;
+  margin-left: 0;
+}
+
+/* تنسيق الصور داخل نافذة التحرير */
+#editTextarea img {
+  max-width: 35%;
+  height: auto;
+  border-radius: 8px;
+  margin: 8px 6px;
+  display: inline-block;
+  cursor: move;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  vertical-align: top;
+  position: relative;
+}
+
+#editTextarea img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* تحسين التدفق بين الصور والنص */
+#editTextarea {
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+/* فئات لتحديد موضع الصورة - صور على اليمين */
+#editTextarea img.float-right {
+  float: right;
+  margin-left: 12px;
+  margin-bottom: 8px;
+  max-width: 40%;
+}
+
+#editTextarea img.float-left {
+  float: left;
+  margin-right: 12px;
+  margin-bottom: 8px;
+  max-width: 40%;
+}
+
+#editTextarea img.inline {
+  display: inline-block;
+  margin: 4px 6px;
+  vertical-align: middle;
+  max-width: 25%;
+}
+
+/* تحسين التخطيط للصور والنص في نافذة التحرير */
+#editTextarea {
+  position: relative;
+}
+
+#editTextarea:empty:before {
+  content: attr(placeholder);
+  color: #888;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  pointer-events: none;
+}
+
+/* تحسين الاستجابة للجوال */
+@media (max-width: 768px) {
+  #editTextarea img {
+    max-width: 50%;
+    margin: 6px 4px;
+  }
+
+  #editTextarea {
+    font-size: 16px !important;
+    padding: 12px;
+    max-height: 60vh !important; /* تقليل الارتفاع لإتاحة مساحة للأزرار */
+  }
+
+  #editModal > div {
+    margin: 2vh 10px;
+    max-width: 95%;
+    width: 95%;
+    max-height: 90vh;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* تحسين تخطيط الأزرار في الجوال */
+  #editModal > div > div:last-child {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    flex-shrink: 0; /* منع انكماش الأزرار */
+  }
+
+  /* تصغير الأزرار في الجوال */
+  #editModal button {
+    padding: 6px 8px !important;
+    font-size: 0.75rem !important;
+    margin: 2px 1px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ضمان ظهور زر الحفظ دائماً */
+  #editModal button[onclick="saveEditedText()"] {
+    background-color: #28a745 !important;
+    font-weight: bold !important;
+    min-width: 60px !important;
+  }
+
+  /* تحسين مساحة نافذة التحرير */
+  #editModal {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  /* تحسين للشاشات الصغيرة جداً */
+  @media (max-width: 480px) {
+    #editModal > div {
+      margin: 1vh 5px;
+      padding: 10px;
+    }
+
+    #editModal button {
+      padding: 4px 6px !important;
+      font-size: 0.7rem !important;
+      margin: 1px !important;
+    }
+
+    #editTextarea {
+      font-size: var(--edit-font-size, 14px) !important;
+      padding: 10px !important;
+      margin: 10px auto 5px auto !important;
+    }
+  }
+}
+
+/* تحسين الاستجابة للأجهزة اللوحية */
+@media (max-width: 1024px) and (min-width: 769px) {
+  #editTextarea img {
+    max-width: 40%;
+  }
+}
+
+/* تحسين الاستجابة للشاشات الكبيرة */
+@media (min-width: 1025px) {
+  #editModal > div {
+    max-width: 800px;
+  }
+}
+
+/* تحسين أداء الصور على الأجهزة ذات الشاشات عالية الكثافة */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  #editTextarea img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+
+/* تنسيق النص في الملاحظات التي تحتوي على صور */
+.note-box:has(img) .note-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-right: 0;
+  padding-left: 2px;
+  padding-right: 2px;/*ابتعاد النص عن الحافة*/
+  text-align: right;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 99%; /* ابتعاد الصورة عن الحافة*/
+  float: right;
+  box-sizing: border-box;
+  clear: right;
+}
+
+
+/* حالة التوسع للنص في الملاحظات التي تحتوي على صور */
+.note-box:has(img) .note-preview.expanded {
+  display: block;
+  max-height: 30%;
+  overflow: visible;
+  -webkit-line-clamp: none;
+}
+/* 🧭  تنسيق قائمة الاعدادات نسخ,تحرير,نقل الى */
+.menu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  min-width: 130px;  /*طول و عرض نافذة قائمة الاعدادات*/
+  max-width: 200px;   
+  background-color: #fff;
+  border: 1px solid #ddd;  /*اطار نافذة قائمة الاعدادات*/
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+}
+
+/* تنسيق العناصر داخل قائمة الاعدادات+نسخ,تحرير,نقل الى */
+.menu button, .move-menu button {
+  width: 80%;
+  text-align: right;
+  padding: 4px 4px; /* تباعد الكلمات عموديا */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px; /* حجم خط (قائمة الاعدادات)+(نسخ,تحرير,نقل)+(نقل الى) */
+  transition: background 0.2s ease;
+}
+
+      /* هذه القائمة لاتعمل شيء*/
+.move-menu {
+  position: fixed; 
+  min-width: 90px;
+  max-width: 140px;
+  font-size: 13px; 
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 999999;
+  padding: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+/* تنسيق قائمة نقل الى */
+.move-menu {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  left: auto;
+  min-width: 120px;
+  max-height: 300px; /* حد أقصى للارتفاع */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 120;
+  transition: all 0.3s ease-in-out;
+  margin-left: 0;
+  margin-right: 4px; /* مسافة بسيطة بين القائمتين */
+  overflow-y: auto; /* إضافة التمرير العمودي */
+  overflow-x: hidden; /* منع التمرير الأفقي */
+  /* ضمان ظهور القائمة حتى لو كانت خارج الشاشة */
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+
+/* تأثير عند المرور */
+.menu button:hover, .move-menu button:hover {
+  background-color: #f0f0f0;
+}
+
+/* تنسيق شريط التمرير لقائمة نقل إلى */
+.move-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.move-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.move-menu::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.move-menu::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* دعم Firefox */
+.move-menu {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+/* 📝 شكل نافذة تحرير النص المحفوظ */
+#editModal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+/* محتوى النافذة */
+#editModal > div {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+margin: auto;
+margin-top: 10vh;
+
+}
+
+/* مربع النص */
+#editTextarea {
+  width: 100%;
+  height: 250px;
+  padding: 10px;
+  font-size: var(--edit-font-size, 20px); /* 👈  تغيير حجم خط الملاحظة للتحرير قابل للتعديل */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  direction: rtl;
+  outline: none;
+  overflow-y: auto;
+}
+/* 🌙 الوضع الليلي اختياري */
+body.night {
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+body.night .tab-btn {
+  background-color: #333;
+  color: #eee;
+  border-color: #555;
+}
+
+body.night .tab-btn.active {
+  background-color: #007bff;
+  color: white;
+}
+
+body.night .note-box {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+body.night .menu, body.night .move-menu {
+  background-color: #2a2a2a;
+  color: #eee;
+  border-color: #444;
+}
+
+/* تنسيق شريط التمرير للوضع الليلي */
+body.night .move-menu::-webkit-scrollbar-track {
+  background: #3a3a3a;
+}
+
+body.night .move-menu::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+body.night .move-menu::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* دعم Firefox للوضع الليلي */
+body.night .move-menu {
+  scrollbar-color: #666 #3a3a3a;
+}
+/* 📱 تحسينات للجوال */
+.tab-btn {
+  font-size: var(--tab-font-size, 12px);  /* حجم أسماء اللوحات للجوال (مرتبط بزر +/−) */
+  padding: 4px 4px;
+  font-weight: bold; /* سماكة الخط للجوال */
+  /* تحسين للمس */
+  touch-action: manipulation;
+}
+
+#editTextarea {
+  height: 200px;
+}
+
+/* تحسين التمرير على الجوال */
+body {
+  -webkit-overflow-scrolling: touch;
+}
+/*  لتوسيع الملاحظة عند الضغط عليها بدون صور*/
+
+
+.note-preview {
+  display: -webkit-box;
+  line-clamp: 3; /* 👈 هذا السطر يجعل العرض = 3 أسطر كحد أقصى */
+  -webkit-line-clamp: 3; /* 👈 هذا السطر يجعل العرض = 3 أسطر كحد أقصى */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5; /* توحيد ارتفاع السطر لضبط تموضع النص */
+        /* لا نحدد max-height لنبقي الارتفاع مرنًا (1،2،3 أسطر) */
+  white-space: pre-line;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: var(--note-font-size, 13px);       /* 👈  حجم نص الملاحظة قابل للتعديل */
+  /* بلا حشوة سفلية لتجنب فراغ مع سطر واحد */
+  position: static;
+  text-align: right;
+  max-height: 4.5em; /* 3 أسطر × 1.5 line-height */
+}
+
+/* زر حجم النص داخل قائمة الإعدادات لااااااااتعمل */
+.font-size-btn {
+  border: 1px solid #bbb; /* زر بحدود ظاهرة بصريًا */
+  border-radius: 6px;
+  margin: 6px 8px 8px 8px;
+  padding: 6px 8px;
+  background: #fff;
+  font-size: 12px;  /* لايعمل*/
+}
+
+/* سطر معلومات التاريخ تحت الملاحظة */
+.note-meta { /* هنا موضع تاريخ الملاحظة */
+  font-size: 9px;
+  color: #9aa0a6; /* لون فاتح */
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* لا حاجة لتخطيط شبكة؛ ارتفاع الصندوق = ارتفاع النص فقط */
+
+.note-preview.expanded {
+  display: block;
+  max-height: none;
+  overflow: visible;
+}
+
+/* تحسينات إضافية للجوال */
+.note-box {
+  /* تحسين للمس */
+  touch-action: manipulation;
+}
+
+.menu, .move-menu {
+  /* تحسين ظهور القوائم على الجوال */
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+/* موضع وحجم نسخ تحرير حذف*/
+
+/* إشعار النسخ (توست) */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}

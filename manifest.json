@@ -1,0 +1,23 @@
+{
+  "name": "الحافظة - مدير الملاحظات",
+  "short_name": "الحافظة",
+  "description": "تطبيق إدارة الملاحظات مع الترجمة والصور",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

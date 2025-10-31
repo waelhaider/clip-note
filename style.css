@@ -54,11 +54,18 @@ body {
   box-shadow: -6px 0 6px -6px rgba(0,0,0,0.08); /* فصل بصري خفيف */
 }
 
+/* تنسيق زر المحذوفات */
+.trash-tab {
+  background-color: #f8f8f8;
+  border-color: #ddd;
+  margin-inline-start: 4px; /* مسافة بسيطة من الأزرار الأخرى */
+}
+
 /* زر التبويب اول ازرار */
 .tab-btn {
   flex: 1 0 auto;/* يجعل الزر يتقلص حسب الحاجة */
   min-width: 50px;
-  max-width: 100px;
+  max-width: none;
   padding: 6px 12px;
   font-size: var(--tab-font-size, 14px); /* حجم أسماء اللوحات (قابل للتعديل) */
   background-color: #f0f0f0;
@@ -112,7 +119,7 @@ body {
 
 /* مكان تباعد الملاحظات (المسافة بين بطاقات الملاحظات) */
 .note-box {
-  padding: 8px 10px 8px 0px; /* مساواة الحشوة العلوية والسفلية لضبط المحاذاة العمودية */
+  padding: 7px 7px 7px 7px; /* مساواة الحشوة العلوية والسفلية لضبط المحاذاة العمودية */
   border-radius: 8px;
   margin-bottom: 5px; /* زيادة للمسافة بين الملاحظات لتجنب الانضغاط(غيرصحيح) */
   position: relative;
@@ -134,7 +141,7 @@ body {
 
 /* تصغير زر القائمة ليقترب من الحافة بدون فراغات كبيرة */
 .menu-toggle {
-  padding: 2px 4px; /* زر صغير وملاصق تقريبًا */
+  padding: 1px 6px; /* زر صغير وملاصق تقريبًا */
 
 }
 
@@ -169,33 +176,16 @@ body {
   margin-left: 0;
 }
 
-/* تنسيق الصور داخل نافذة التحرير */
+/* إخفاء الصور داخل نافذة التحرير */
 #editTextarea img {
-  max-width: 35%;
-  height: auto;
-  border-radius: 8px;
-  margin: 8px 6px;
-  display: inline-block;
-  cursor: move;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  vertical-align: top;
-  position: relative;
+  display: none !important;
 }
 
-#editTextarea img:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* تحسين التدفق بين الصور والنص */
+/* تباعد أسطر نص التحرير نهائي */
 #editTextarea {
-  line-height: 1.6;
+  line-height: 1.5;
   word-wrap: break-word;
+  white-space: pre-line;
 }
 
 /* فئات لتحديد موضع الصورة - صور على اليمين */
@@ -220,9 +210,9 @@ body {
   max-width: 25%;
 }
 
-/* تحسين التخطيط للصور والنص في نافذة التحرير */
+/* موشغالة*/
 #editTextarea {
-  position: relative;
+  /*position: relative;*/
 }
 
 #editTextarea:empty:before {
@@ -242,32 +232,32 @@ body {
   }
 
   #editTextarea {
-    font-size: 16px !important;
-    padding: 12px;
-    max-height: 60vh !important; /* تقليل الارتفاع لإتاحة مساحة للأزرار */
+    /*font-size: 16px !important;*/
+    /*padding: 12px;*/
+    max-height: 75vh !important; /* ارتفاع المربع الحاوي على نص التحرير نهائي */
   }
 
   #editModal > div {
-    margin: 2vh 10px;
-    max-width: 95%;
-    width: 95%;
+    margin: 1vh 1px;
+    max-width: 99%;
+    width: 98vw;/*عرض نافذة التحرير نهائي*/
     max-height: 90vh;
-    padding: 15px;
+    padding: 1px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
-  /* تحسين تخطيط الأزرار في الجوال */
+  /* حاوية حفظ, تراجع , ترجمة */
   #editModal > div > div:last-child {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
+    margin-top: 1px;
+    padding-top: 1px;
+    border-top: 0px solid #eee;/*بدون حدود حاوية ظاهرة*/
     flex-shrink: 0; /* منع انكماش الأزرار */
   }
 
   /* تصغير الأزرار في الجوال */
-  #editModal button {
+  .edit-modal-buttons button {
     padding: 6px 8px !important;
     font-size: 0.75rem !important;
     margin: 2px 1px !important;
@@ -290,20 +280,20 @@ body {
   /* تحسين للشاشات الصغيرة جداً */
   @media (max-width: 480px) {
     #editModal > div {
-      margin: 1vh 5px;
-      padding: 10px;
+      margin: 1vh 1px;/*خاص بنافذة التحرير نهائي*/
+      padding: 1px;
     }
 
-    #editModal button {
-      padding: 4px 6px !important;
-      font-size: 0.7rem !important;
-      margin: 1px !important;
+    .edit-modal-buttons button {
+      padding: 5px 6px !important;
+      font-size: 0.78rem !important;/*حجم خط حفظ , ترجمة*/
+      margin: 0px !important;
     }
 
     #editTextarea {
       font-size: var(--edit-font-size, 14px) !important;
-      padding: 10px !important;
-      margin: 10px auto 5px auto !important;
+      padding: 8px !important;/*تباعد مربع النص داخل التحرير نهائي*/
+      margin: 10px auto 5px auto !important;/*تباعد مربع النص خارج التحرير نهائي*/
     }
   }
 }
@@ -362,10 +352,10 @@ body {
   position: absolute;
   left: 100%;
   top: 0;
-  min-width: 130px;  /*طول و عرض نافذة قائمة الاعدادات*/
+  min-width: 160px;  /*طول و عرض نافذة قائمة الاعدادات*/
   max-width: 200px;   
   background-color: #fff;
-  border: 1px solid #ddd;  /*اطار نافذة قائمة الاعدادات*/
+  border: 1px solid #fcb290;  /*اطار نافذة قائمة الاعدادات*/
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   z-index: 100;
@@ -380,7 +370,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 15px; /* حجم خط (قائمة الاعدادات)+(نسخ,تحرير,نقل)+(نقل الى) */
+  font-size: 17px; /* حجم خط (قائمة الاعدادات)+(نسخ,تحرير,نقل)+(نقل الى) */
   transition: background 0.2s ease;
 }
 
@@ -453,6 +443,7 @@ body {
   scrollbar-color: #c1c1c1 #f1f1f1;
 }
 /* 📝 شكل نافذة تحرير النص المحفوظ */
+/* --- تنسيق عام للنافذة --- */
 #editModal {
   position: fixed;
   inset: 0;
@@ -460,45 +451,234 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 10px;
   z-index: 200;
+  /* تأثير دخول النافذة */
+  animation: modalSlideIn 0.3s ease-out;
 }
 
 .hidden {
   display: none !important;
 }
 
-
-/* محتوى النافذة */
-#editModal > div {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-margin: auto;
-margin-top: 10vh;
-
+/* تأثير انزلاق دخول النافذة */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* مربع النص */
-#editTextarea {
-  width: 100%;
-  height: 250px;
-  padding: 10px;
-  font-size: var(--edit-font-size, 20px); /* 👈  تغيير حجم خط الملاحظة للتحرير قابل للتعديل */
-  border: 1px solid #ccc;
-  border-radius: 6px;
+/* زر إغلاق نافذة التحرير - خارج الحاوية */
+/* -- زر اغلاق التحرير نهائي-- */
+.edit-modal-close-btn {
+  position: absolute;
+  top: 5px; /* موقع من الأعلى */
+  right: 5px; /* موقع من اليمين */
+  font-size: 1rem; /* حجم الأيقونة */
+  background: #dc3545;
+  border: 0px solid #ddd;
+  border-radius: 50%;
+  width: 30px; /* عرض الزر */
+  height: 30px; /* ارتفاع الزر */
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.edit-modal-close-btn:hover {
+  background: #fff;
+  color: #333;
+  transform: scale(1.1);
+}
+
+/* حاوية محتوى نافذة التحرير */
+/* --- أبعاد ومواقع --- */
+.edit-modal-wrapper {
+  background-color: white;
+  border-radius: 10px;
+  width: 90vw; /* عرض النافذة */
+  max-width: 600px; /* الحد الأقصى للعرض */
+  height: 70vh; /* ارتفاع النافذة */
+  max-height: 80vh; /* الحد الأقصى للارتفاع */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  /* دعم تقلص الارتفاع مع الكيبورد */
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+/*  دعم خاص لمتصفح Edge نهائي*/
+@supports (-ms-ime-align: auto) or (-webkit-appearance: none) {
+  .edit-modal-wrapper {
+    height: 85vh !important; /* ارتفاع أصغر لتجنب شريط المتصفح */
+    max-height: 85vh !important;
+    margin-top: 7.5vh !important; /* هوامش علوية لتجنب شريط العنوان */
+    margin-bottom: 7.5vh !important; /* هوامش سفلية لتجنب شريط التنقل */
+  }
+}
+
+/* محتوى النافذة - للجوال */
+/* --- استجابة للجوال --- */
+@media (max-width: 768px) {
+  .edit-modal-wrapper {
+    width: 95vw; /* عرض أكبر للجوال */
+    height: 90vh; /* ارتفاع أكبر للجوال */
+    max-height: 90vh;
+    margin: 5vh auto; /* هوامش للتوسيط */
+  }
+}
+
+/* مربع النص في نافذة التحرير */
+/* --- أبعاد ومواقع --- */
+.edit-textarea {
+  width: 96vw; /* عرض المربع الذي يحوي النص والصور */
+  flex: 1;
+  min-height: 200px; /* الارتفاع الأدنى */
+  margin: 60px auto 5px auto; /* مسافة من الأعلى لتجنب زر الإغلاق */
+  padding: 15px; /* حشوة داخلية */
+  border: 1.5px solid #d7baec;
+  border-radius: 12px;
   direction: rtl;
-  outline: none;
+  text-align: right;
+  background: #f9f9f9;
   overflow-y: auto;
+  outline: none;
+  font-size: var(--edit-font-size, 16px); /* حجم الخط */
+  line-height: 1.6;
+  resize: none;
+  box-sizing: border-box;
+}
+
+/* تخصيص للجوال */
+/* --- استجابة للجوال --- */
+@media (max-width: 768px) {
+  .edit-textarea {
+    width: 95vw; /* عرض مربع نص التحرير نهائي  */
+    margin: 70px auto 5px auto; /* مسافة أكبر من الأعلى للزر */
+    padding: 12px; /* حشوة أصغر */
+    font-size: var(--edit-font-size, 14px); /* حجم خط أصغر */
+    min-height: 150px; /* ارتفاع أدنى أصغر */
+  }
+}
+
+/* أزرار نافذة التحرير */
+/* --- أبعاد ومواقع --- */
+.edit-modal-buttons {
+  display: flex;
+  gap: 2px; /* موشغالة*/
+  align-items: center;
+  margin: 2px 2px; /*  موشغالة */
+  flex-wrap: initial;
+  justify-content: center;
+  padding-bottom: 5px; /* موشغالة  */
+}
+
+/* أزرار فردية - أبعاد ومواقع */
+/* --- أحجام --- */
+.edit-save-btn,
+.edit-undo-btn,
+.edit-redo-btn,
+.edit-font-increase-btn,
+.edit-font-decrease-btn,
+.edit-translate-btn {
+  padding: 6px 10px; /* حشوة داخلية */
+  font-size: 0.8rem; /* حجم الخط */
+  flex-shrink: 0;
+  min-width: 65px; /* العرض الأدنى */
+}
+
+/* ألوان الأزرار */
+/* --- ألوان وتأثيرات --- */
+.edit-save-btn { background-color: #007bff; color: white; }
+.edit-undo-btn { background-color: #f59e42; color: white; }
+.edit-redo-btn { background-color: #16a34a; color: white; }
+.edit-font-increase-btn,
+.edit-font-decrease-btn { background-color: #555; color: white; }
+.edit-translate-btn { background-color: #4285f4; color: white; }
+
+/* تخصيص للجوال - أزرار الترجمة */
+@media (max-width: 768px) {
+  .translate-modal-buttons {
+    gap: 4px;
+    padding: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .translate-modal-buttons .original-copy-btn,
+  .translate-modal-buttons .translate-save-btn,
+  .translate-modal-buttons .translated-copy-btn {
+    flex: 1;
+    min-width: 80px;
+    font-size: 12px;
+    padding: 6px 1px;/*طول+عرض ازرار الترجمة نهائي*/
+  }
+}
+
+/* تخصيص للجوال */
+/* --- استجابة للجوال نهائي --- */
+@media (max-width: 768px) {
+  .edit-modal-buttons {
+    gap: 1px; /* تباعد أصغر جداً للضغط */
+    margin: 2px 2px; /* هوامش أصغر */
+    padding-bottom: 8px; /* حشوة سفلية أصغر */
+    flex-wrap: nowrap; /* منع النزول لسطر جديد */
+    overflow-x: auto; /* إضافة تمرير أفقي إذا لزم الأمر */
+    justify-content: flex-start; /* محاذاة للبداية للسماح بالتمرير */
+    -webkit-overflow-scrolling: touch; /* تمرير سلس على iOS */
+  }
+
+  .edit-save-btn,
+  .edit-undo-btn,
+  .edit-redo-btn,
+  .edit-font-increase-btn,
+  .edit-font-decrease-btn,
+  .edit-translate-btn {
+    padding: 4px 6px; /* حشوة داخلية أصغر جداً */
+    font-size: 0.7rem; /* حجم خط أصغر */
+    min-width: 45px; /* عرض أدنى أصغر للضغط */
+    flex-shrink: 1; /* السماح بالانكماش */
+  }
 }
 /* 🌙 الوضع الليلي اختياري */
 body.night {
   background-color: #1e1e1e;
   color: #eee;
+}
+
+body.night #tabContainer {
+  background-color: #2a2a2a;
+  border-bottom-color: #444;
+}
+
+body.night #textarea {
+  background-color: #2a2a2a;
+  border-bottom-color: #444;
+}
+
+body.night #newNoteInput {
+  background-color: #2a2a2a;
+  color: #eee;
+  border-color: #555;
+}
+
+body.night #newNoteInput::placeholder {
+  color: #aaa;
 }
 
 body.night .tab-btn {
@@ -515,6 +695,72 @@ body.night .tab-btn.active {
 body.night .note-box {
   background-color: #2a2a2a;
   border-color: #444;
+  color: #eee;
+}
+
+/* تنسيق حاوية أزرار التحكم في الوضع الليلي */
+body.night .edit-modal-buttons {
+  background-color: #333;
+  border-top: 1px solid #555;
+}
+
+/* حاوية أزرار مربع الإدخال في الوضع الليلي */
+body.night div[class*="pt-1 pb-1 px-12"] {
+  background-color: #2a2a2a;
+  border-bottom-color: #444;
+}
+
+/* نافذة التحرير في الوضع الليلي */
+body.night .edit-modal-wrapper {
+  background-color: #2a2a2a;
+  color: #eee;
+}
+
+body.night .edit-textarea {
+  background-color: #333;
+  color: #eee;
+  border-color: #555;
+}
+
+body.night .edit-textarea::placeholder {
+  color: #aaa;
+}
+
+/* نافذة الترجمة في الوضع الليلي */
+body.night .translate-modal-wrapper {
+  background-color: #2a2a2a;
+  color: #eee;
+}
+
+body.night .translate-language-controls {
+  background-color: #333;
+  border-bottom-color: #444;
+}
+
+body.night .translate-lang-select {
+  background-color: #2a2a2a;
+  color: #eee;
+  border-color: #555;
+}
+
+body.night .translate-lang-select option {
+  background-color: #2a2a2a;
+  color: #eee;
+}
+
+body.night .translate-modal-buttons {
+  background-color: #333;
+  border-top-color: #444;
+}
+
+body.night .translate-textarea {
+  background-color: #333;
+  color: #eee;
+  border-color: #555;
+}
+
+body.night .translate-textarea::placeholder {
+  color: #aaa;
 }
 
 body.night .menu, body.night .move-menu {
@@ -634,4 +880,716 @@ body {
   z-index: 10000;
   opacity: 0;
   transition: opacity 0.2s ease;
+}
+
+/* تنسيقات نافذة ترتيب التبويبات */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  direction: rtl;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+  border-radius: 10px 10px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #eee;
+}
+
+.modal-body {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.tab-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tab-order-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  user-select: none;
+  max-width: 250px; /* تقليل عرض المستطيلات */
+  width: 100%;
+  margin: 0 auto; /* توسيط المستطيلات */
+  justify-content: space-between;
+}
+
+.tab-order-item:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.tab-order-item.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.drag-handle {
+  font-size: 16px;
+  color: #6c757d;
+  margin-left: 10px;
+  cursor: grab;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.tab-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+.tab-position {
+  background-color: #007bff;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 24px;
+  text-align: center;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  background-color: #f8f9fa;
+  border-radius: 0 0 10px 10px;
+}
+
+.save-btn, .cancel-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #545b62;
+}
+
+/* تنسيق أزرار التحريك */
+.move-up-btn, .move-down-btn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.move-up-btn:hover, .move-down-btn:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.move-up-btn:active, .move-down-btn:active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* تحسينات للجوال */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .modal-body {
+    padding: 15px;
+    max-height: 300px;
+  }
+
+  .tab-order-item {
+    padding: 10px 12px;
+  }
+
+  .tab-name {
+    font-size: 13px;
+  }
+
+  .modal-footer {
+    padding: 12px 15px;
+  }
+
+  .save-btn, .cancel-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .move-up-btn, .move-down-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+}
+
+/* الوضع الليلي لنافذة الترتيب */
+body.night .modal-content {
+  background-color: #2a2a2a;
+  color: #eee;
+}
+
+body.night .modal-header {
+  background-color: #333;
+  border-bottom-color: #444;
+}
+
+body.night .modal-footer {
+  background-color: #333;
+  border-top-color: #444;
+}
+
+body.night .tab-order-item {
+  background-color: #333;
+  border-color: #444;
+  color: #eee;
+}
+
+body.night .tab-order-item:hover {
+  background-color: #444;
+}
+
+body.night .close-btn:hover {
+  background-color: #444;
+}
+
+/* تنسيقات نافذة تذكير النسخ الاحتياطي */
+.backup-reminder-content {
+  max-width: 400px;
+  text-align: center;
+}
+
+.backup-reminder-content .modal-body p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.backup-now-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backup-now-btn:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.snooze-btn {
+  background-color: #ffc107;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.snooze-btn:hover {
+  background-color: #e0a800;
+  transform: translateY(-1px);
+}
+
+/* الوضع الليلي لنافذة التذكير */
+body.night .backup-reminder-content {
+  background-color: #2a2a2a;
+  color: #eee;
+}
+
+body.night .backup-reminder-content .modal-header {
+  background-color: #333;
+  border-bottom-color: #444;
+}
+
+body.night .backup-now-btn {
+  background-color: #28a745;
+}
+
+body.night .snooze-btn {
+  background-color: #ffc107;
+  color: #333;
+}
+
+/* تنسيقات نافذة الترجمة */
+/* --- أبعاد ومواقع --- */
+.translate-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3); /* خلفية مظللة بلون متوسط */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.translate-modal-wrapper {
+  background: white;
+  border-radius: 12px;
+  width: 95vw; /* عرض النافذة */
+  max-width: 500px; /* الحد الأقصى للعرض */
+  height: 75vh; /* ارتفاع النافذة */
+  max-height: 85vh; /* الحد الأقصى للارتفاع */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  /* دعم تقلص الارتفاع مع الكيبورد */
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+/* دعم خاص لمتصفح Edge */
+@supports (-ms-ime-align: auto) or (-webkit-appearance: none) {
+  .translate-modal-wrapper {
+    height: 85vh !important; /* ارتفاع أصغر لتجنب شريط المتصفح */
+    max-height: 85vh !important;
+    margin-top: 7.5vh !important; /* هوامش علوية لتجنب شريط العنوان */
+    margin-bottom: 7.5vh !important; /* هوامش سفلية لتجنب شريط التنقل */
+  }
+}
+
+/* حاوية تبديل اللغات */
+/* --- أبعاد ومواقع --- */
+.translate-language-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px; /* حشوة داخلية */
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  gap: 10px;
+}
+
+.translate-language-selectors {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* تباعد بين العناصر */
+  flex: 1;
+}
+
+/* --- أحجام --- */
+.translate-lang-select {
+  padding: 6px 8px; /*  تباعد زري اختيار الترجمة */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px; /* حجم الخط */
+  background: white;
+  min-width: 120px; /* العرض الأدنى */
+}
+
+.translate-swap-btn {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px; /* حجم الأيقونة */
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; /* عرض الزر */
+  height: 36px; /* ارتفاع الزر */
+}
+
+.translate-swap-btn:hover {
+  background: #e9ecef;
+  transform: scale(1.1);
+}
+/*زراغلاق الترجمة نهائي*/
+.translate-close-btn {
+  background: #dc3545;
+  color: white;
+  padding: 4px 9px; /* حشوة داخلية */
+  border-radius: 6px;
+  font-size: 14px; /* حجم الخط */
+}
+
+.translate-close-btn:hover {
+  background: #c82333;
+}
+
+/* حاوية محتوى الترجمة */
+/* --- أبعاد ومواقع --- */
+.translate-content-container {
+  display: flex;
+  gap: 15px; /* تباعد بين الأقسام */
+  padding: 20px; /* حشوة داخلية */
+  flex: 1;
+  overflow: hidden;
+  height: calc(100dvh - 80px); /* تخصيص الارتفاع */
+}
+
+/* ابعاد مربعي النص والترجمة نهائي */
+.translate-text-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* تباعد بين العناصر من الاعلى والاسفل نهائي */
+}
+
+/* --- أحجام --- */
+.translate-label {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px; /* حجم الخط */
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.translate-textarea {
+  flex: 1;
+  padding: 12px; /* حشوة داخلية */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  resize: none;
+  font-family: inherit;
+  font-size: var(--note-font-size, 14px); /* حجم الخط */
+  line-height: 1.5;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.original-text {
+  direction: rtl;
+  text-align: right;
+}
+
+.translated-text {
+  direction: ltr;
+  text-align: left;
+}
+
+/* حاوية أزرار الترجمة */
+.translate-buttons-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* أزرار الترجمة */
+/* --- أبعاد ومواقع --- */
+.original-copy-btn,
+.translated-copy-btn {
+  padding: 6px 12px; /* حشوة داخلية */
+  border-radius: 6px;
+  font-size: 14px; /* حجم الخط */
+  align-self: flex-start;
+  margin: 3px 3px; /* نسخ الاصلي+الترجمة نهائي  */
+}
+
+.original-copy-btn {
+  background: #007bff;
+  color: white;
+}
+
+.original-copy-btn:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.translated-copy-btn {
+  background: #007bff;
+  color: white;
+}
+
+.translated-copy-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+/* تنسيقات عامة للأزرار */
+/* --- ألوان وتأثيرات مشتركة --- */
+.edit-save-btn,
+.edit-undo-btn,
+.edit-redo-btn,
+.edit-font-increase-btn,
+.edit-font-decrease-btn,
+.edit-translate-btn,
+.translate-swap-btn,
+.translate-close-btn {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;/*تدويرة زر اغلاق الترجمة*/
+  font-weight: 500;
+}
+
+/* تنسيقات خاصة لأزرار النسخ */
+/* --- ألوان وتأثيرات منفصلة --- */
+.original-copy-btn,
+.translated-copy-btn {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* تأثيرات المرور للأزرار */
+/* --- ألوان وتأثيرات --- */
+.edit-save-btn:hover,
+.edit-undo-btn:hover,
+.edit-redo-btn:hover,
+.edit-font-increase-btn:hover,
+.edit-font-decrease-btn:hover,
+.edit-translate-btn:hover,
+.translate-swap-btn:hover,
+.translate-close-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* تأثيرات المرور لأزرار النسخ */
+/* --- ألوان وتأثيرات منفصلة --- */
+.original-copy-btn:hover,
+.translated-copy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* أزرار نافذة الترجمة */
+.translate-modal-buttons {
+  display: flex;
+  gap: 8px;/*ملغاة*/
+  align-items: center;
+  justify-content: center;
+  margin-top: 0px;/*موقع أزرار نافذة الترجمة نهائي*/
+  padding: 10px;/*ملغاة*/
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  flex-wrap: nowrap;
+}
+
+.translate-save-btn {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.translate-save-btn:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+/* تخصيص للجوال */
+/* --- استجابة للجوال --- */
+@media (max-width: 768px) {
+  .translate-modal-wrapper {
+    width: 95vw; /* عرض أصغر للجوال لتجنب تجاوز الحدود */
+    height: 85vh; /* ارتفاع أصغر للجوال */
+    max-height: 85vh;
+    margin: 7.5vh auto; /* هوامش أكبر للتوسيط */
+  }
+
+  .translate-language-controls {
+    padding: 8px 12px; /* حشوة مناسبة */
+    flex-wrap: nowrap; /* السماح بالالتفاف للشاشات الصغيرة */
+    gap: 6px; /* تباعد مناسب */
+  }
+
+  .translate-language-selectors {
+    flex-basis: 100%; /* يأخذ العرض الكامل */
+    justify-content: center;
+  }
+
+  .translate-lang-select {
+    min-width: 90px; /* عرض أدنى أصغر */
+    font-size: 14px; /* حجم خط مناسب */
+    flex: 1; /* يتمدد ليأخذ المساحة المتاحة */
+  }
+
+  .translate-content-container {
+    padding: 8px; /* حشوة أصغر لتوفير المساحة */
+    gap: 6px; /* تباعد أصغر بين الأقسام */
+    height: calc(85vh - 120px); /* تخصيص الارتفاع مع مراعاة الرأس */
+    flex-direction: row; /* ترتيب أفقي للنصوص المتقابلة */
+  }
+
+  .translate-text-section {
+    flex: 1; /* يأخذ المساحة المتاحة */
+    min-height: 100px; /* ارتفاع أدنى أصغر لتوفير المساحة */
+    max-width: calc(50% - 3px); /* حد أقصى للعرض لضمان عدم التجاوز */
+  }
+
+  .translate-textarea {
+    padding: 8px; /* حشوة أصغر */
+    font-size: var(--note-font-size, 12px); /* حجم خط أصغر لتوفير المساحة */
+    line-height: 1.5; /*تباعد أسطر الترجمة نهائي */
+    min-height: 80px; /* ارتفاع أدنى */
+  }
+
+  .original-copy-btn,
+  .translated-copy-btn {
+    padding: 4px 8px; /* حشوة أصغر */
+    font-size: 12px; /* حجم خط أصغر */
+    align-self: center; /* محاذاة للمنتصف نهائي */
+    min-width: -webkit-fill-available; /* عرض نهائي */
+  }
+/*موقع أزرار الترجمة نهائي*/
+  .translate-modal-buttons {
+    gap: 10px;
+    padding: 1px;
+  }
+
+  .translate-save-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+/* تخصيص إضافي للشاشات الصغيرة جداً */
+@media (max-width: 480px) {
+  .translate-modal-wrapper {
+    width: 98vw; /* عرض أكبر للشاشات الصغيرة جداً */
+    height: 95vh; /* ارتفاع أكبر */
+    max-height: 95vh;
+    margin: 2.5vh auto;
+  }
+
+  .translate-language-controls {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .translate-lang-select {
+    min-width: 80px;
+    font-size: 17px;/*حجم خط اختيار الترجمة نهائي*/
+  }
+
+  .translate-content-container {
+    padding: 6px;
+    gap: 4px;
+    height: calc(95vh - 100px);
+  }
+
+  .translate-text-section {
+    flex: 1;
+    min-height: 80px;
+    max-width: calc(50% - 2px);
+  }
+
+  .translate-textarea {
+    padding: 11px;/*تباعد النص عن محتواه للترجمة نهائي*/
+    font-size: var(--note-font-size, 10px);
+    min-height: 50px;
+  }
+
+  .original-copy-btn,
+  .translated-copy-btn {
+    padding: 4px 6px;/*موقع نسخ الاصلي+الترجمة نهائي*/
+    font-size: 14px;/*حجم خط نسخ الاصلي والترجمة نهائي*/
+  }
 }

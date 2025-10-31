@@ -88,10 +88,7 @@ function setupEditTextareaHistory() {
        // عند أي إدخال جديد، امسح redoStack
        editRedoStack = [];
 
-       // تحديث تموضع الصور في الملاحظات الأصلية
-       updateImagePositionsInNotes();
-
-       // تنسيق تلقائي للنص العربي والإنجليزي
+       // تنسيق تلقائي للنص العربي والإنجليزي فقط (بدون تحديث تموضع الصور)
        autoFormatTextDirection(textarea);
      };
    }
@@ -307,10 +304,19 @@ function renderTabs() {
   const scrollWrap = document.createElement('div');
   scrollWrap.className = 'tabs-scroll';
 
-  // ترتيب خاص: الرئيسية ثم التبويبات العادية (مع إخفاء المحذوفات) ثم الإعدادات
-  const normalKeys = Object.keys(tabNames).filter(id => id !== 'trash' && id !== 'settings' && id !== 'home');
-  normalKeys.sort();
-  const ordered = ['home', ...normalKeys].filter(k => tabNames[k]);
+  // الحصول على الترتيب المحفوظ أو الافتراضي
+  const savedOrder = safeLocalStorageGet('tabOrder', null);
+  let ordered;
+
+  if (savedOrder && Array.isArray(savedOrder)) {
+    // استخدام الترتيب المحفوظ، مع التأكد من وجود التبويبات
+    ordered = savedOrder.filter(id => tabNames[id] && id !== 'trash' && id !== 'settings');
+  } else {
+    // الترتيب الافتراضي: الرئيسية ثم التبويبات العادية (مع إخفاء المحذوفات) ثم الإعدادات
+    const normalKeys = Object.keys(tabNames).filter(id => id !== 'trash' && id !== 'settings' && id !== 'home');
+    normalKeys.sort();
+    ordered = ['home', ...normalKeys].filter(k => tabNames[k]);
+  }
 
   ordered.forEach((key, idx) => {
     if (!firstTabId) firstTabId = key;
@@ -328,13 +334,26 @@ function renderTabs() {
   settingsBtn.dataset.tab = 'settings';
   settingsBtn.textContent = '🛡️'; // أيقونة ترس بدل النص🛠️/🛡️⚙️
   settingsBtn.title = 'إعدادات';
-                                            // حجم زر اعدادات
-  settingsBtn.style.padding = '1px 3px'; // هنا حجم مربع زر الاعدادات,الحشوة
-  settingsBtn.style.fontSize = '11px'; // هنا حجم مربع زر الاعدادات
+                                             // حجم زر اعدادات
+  settingsBtn.style.padding = '1px 2px'; // هنا حجم مربع زر الاعدادات,الحشوة
+  settingsBtn.style.fontSize = '20px'; // هنا حجم مربع زر الاعدادات
   settingsBtn.style.lineHeight = '1'; // هنا حجم مربع زر الاعدادات
   settingsBtn.style.minWidth = 'auto'; // هنا حجم مربع زر الاعدادات
   settingsBtn.style.height = '30px'; // هنا حجم مربع زر الاعدادات,الارتفاع
   settingsBtn.onclick = (e) => { e.stopPropagation(); toggleSettingsMenu(settingsBtn); };
+
+  // زر المحذوفات - إضافة زر المحذوفات إلى شريط التبويبات
+  const trashBtn = document.createElement('button');
+  trashBtn.className = 'tab-btn trash-tab';
+  trashBtn.dataset.tab = 'trash';
+  trashBtn.textContent = '🗑️';
+  trashBtn.title = 'المحذوفات';
+  trashBtn.style.padding = '1px 3px';
+  trashBtn.style.fontSize = '11px';
+  trashBtn.style.lineHeight = '1';
+  trashBtn.style.minWidth = 'auto';
+  trashBtn.style.height = '30px';
+  trashBtn.onclick = () => switchTab('trash');
 
   tabContainer.appendChild(scrollWrap);
   tabContainer.appendChild(settingsBtn);
@@ -343,7 +362,7 @@ return firstTabId;
 
 // 🔄 تغيير التبويب عند الضغط
 function switchTab(tabId) {
-// تحديث التاب
+  // تحديث التاب
   currentTab = tabId;
   // إزالة التمييز من كل الأزرار
   document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -352,6 +371,35 @@ function switchTab(tabId) {
   // تمييز الزر النشط
   const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
   if (activeBtn) activeBtn.classList.add("active");
+
+  // إخفاء أو إظهار عناصر الواجهة حسب التبويب
+  const textarea = document.getElementById("textarea");
+  const newNoteInput = document.getElementById("newNoteInput");
+  const uploadImageBtn = document.getElementById("uploadImageBtn");
+  const controlDiv = document.querySelector(".pt-1.pb-1.px-12.bg-white.border-b.flex.flex-nowrap");
+  const trashHeader = document.getElementById("trashHeader");
+
+  if (currentTab === "trash") {
+    // إخفاء مربع الإدخال وأزرار التحكم في لوحة المحذوفات
+    if (textarea) textarea.style.display = "none";
+    if (newNoteInput) newNoteInput.style.display = "none";
+    if (uploadImageBtn) uploadImageBtn.style.display = "none";
+    if (controlDiv) controlDiv.style.display = "none";
+    // إظهار عنوان المحذوفات
+    if (trashHeader) {
+      trashHeader.style.display = "block";
+      trashHeader.innerHTML = "<h2 style='text-align: center; font-size: 0.8em; font-weight: bold; color: #dd3131; margin: 0% 0% 0px 0%; padding: 1px 1px; background-color: #f8f8f8; border-radius: 4px; border: 1px solid #be760a; position: fixed; top: 50px; left: 37%; right: 37%; z-index: 100;'>المحذوفات</h2>";
+    }
+  } else {
+    // إظهار مربع الإدخال وأزرار التحكم في اللوحات العادية
+    if (textarea) textarea.style.display = "";
+    if (newNoteInput) newNoteInput.style.display = "";
+    if (uploadImageBtn) uploadImageBtn.style.display = "";
+    if (controlDiv) controlDiv.style.display = "";
+    // إخفاء عنوان المحذوفات
+    if (trashHeader) trashHeader.style.display = "none";
+  }
+
   // عرض الملاحظات الخاصة بالتبويب
   renderNotes();
 }
@@ -429,6 +477,23 @@ function renderNotes() {
       });
 
       modifiedText = tempDiv.innerHTML;
+    }
+
+    // تحديد اتجاه النص حسب اللغة
+    const textContent = modifiedText.replace(/<[^>]*>/g, ''); // إزالة HTML للتحقق من اللغة
+    const isArabic = /[\u0600-\u06FF]/.test(textContent);
+    const isEnglish = /[a-zA-Z]/.test(textContent);
+
+    if (isArabic && !isEnglish) {
+      span.style.direction = 'rtl';
+      span.style.textAlign = 'right';
+    } else if (isEnglish && !isArabic) {
+      span.style.direction = 'ltr';
+      span.style.textAlign = 'left';
+    } else {
+      // نص مختلط أو غير محدد - استخدم الافتراضي
+      span.style.direction = 'rtl';
+      span.style.textAlign = 'right';
     }
 
     span.innerHTML = modifiedText; // استخدام innerHTML لعرض الصور بدلاً من textContent
@@ -749,6 +814,7 @@ function toggleSettingsMenu(anchorBtn) {
   addItem('✏️تعديل لوحة', renameCurrentTab);
   addItem('🌙 وضع ليلي', toggleNightMode);
   addItem('🗑️حذف لوحة', deleteCurrentTab);
+  addItem('🔀 ترتيب لوحات', openTabOrderModal);
 
   // زر حجم النص يفتح قائمة فرعية فيها + و - لكل نوع
   
@@ -998,13 +1064,13 @@ function openEditModal(index) {
     value = value.text || "";
   }
 
-  // حفظ النص الأصلي (مع الصور)
+  // حفظ النص الأصلي (مع الصور كما هو)
   originalNoteContent = value;
 
-  // عرض المحتوى الكامل مع الصور
+  // عرض المحتوى الكامل مع الصور (لكن الصور مخفية في CSS)
   const editTextarea = document.getElementById("editTextarea");
   if (editTextarea) {
-    editTextarea.innerHTML = value;
+    editTextarea.innerHTML = value; // عرض المحتوى كما هو مع الصور
     // تطبيق التنسيق التلقائي عند فتح النافذة
     autoFormatTextDirection(editTextarea);
   }
@@ -1012,10 +1078,9 @@ function openEditModal(index) {
   isEditModalOpen = true;
   setupEditTextareaHistory();
 
-  // جعل الصور قابلة للسحب والإفلات
+  // تطبيق التنسيق التلقائي للنص فقط (بدون صور قابلة للسحب)
   setTimeout(() => {
-    makeImagesDraggable();
-    // تحديث تنسيق الصور بعد فتح النافذة
+    // تحديث تنسيق الصور بعد فتح النافذة (إذا كانت موجودة)
     updateImageStyles();
   }, 100); // تأخير لضمان تحميل DOM
 }
@@ -1029,12 +1094,7 @@ function closeEditModal() {
   editingIndex = null;
   originalNoteContent = null; // مسح النص الأصلي عند الإغلاق
 
-  // إزالة التحديد من جميع الصور
-  const images = document.querySelectorAll('#editTextarea img');
-  images.forEach(img => {
-    img.style.outline = 'none';
-    img.style.boxShadow = '';
-  });
+  // تم تعطيل إزالة التحديد من الصور
 }
 // 💾 حفظ التعديل وتحديث اللوحة
 function saveEditedText() {
@@ -1079,17 +1139,7 @@ function saveEditedText() {
       };
     }
 
-    // حفظ تموضع الصور في نافذة التحرير
-    if (editTextarea) {
-      const images = editTextarea.querySelectorAll('img');
-      editModalImagePositions = {};
-      images.forEach((img, index) => {
-        editModalImagePositions[img.src] = {
-          class: img.className,
-          index: index
-        };
-      });
-    }
+    // تم تعطيل حفظ تموضع الصور في نافذة التحرير
 
     // تم حفظ التغييرات في الملاحظات الأصلية
 
@@ -1419,6 +1469,133 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// نظام النسخ الاحتياطي التلقائي
+let backupReminderInterval = 1 * 60 * 1000; // 1 دقيقة للاختبار (غير إلى 24 * 60 * 60 * 1000 للإنتاج)
+let backupSnoozeDays = 1; // عدد الأيام للتأجيل
+
+// وظيفة التحقق من آخر نسخ احتياطي وإظهار التنبيه
+function checkBackupReminder() {
+  try {
+    const lastBackup = safeLocalStorageGet('lastBackupDate', null);
+    const snoozedUntil = safeLocalStorageGet('backupSnoozedUntil', null);
+
+    if (!lastBackup) {
+      // أول مرة - لا نعرض تنبيه
+      return;
+    }
+
+    const now = new Date();
+    const lastBackupDate = new Date(lastBackup);
+
+    // التحقق من التأجيل
+    if (snoozedUntil) {
+      const snoozeDate = new Date(snoozedUntil);
+      if (now < snoozeDate) {
+        // ما زال مؤجل
+        return;
+      }
+    }
+
+    // حساب الفرق بالأيام
+    const diffTime = now - lastBackupDate;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    if (diffDays >= (backupReminderInterval / (1000 * 60 * 60 * 24))) { // فترة التنبيه (دقيقة واحدة للاختبار)
+      showBackupReminder(diffDays);
+    }
+  } catch (error) {
+    console.error('خطأ في التحقق من تذكير النسخ الاحتياطي:', error);
+  }
+}
+
+// وظيفة عرض تنبيه النسخ الاحتياطي
+function showBackupReminder(daysSinceLastBackup) {
+  const modal = document.createElement('div');
+  modal.id = 'backupReminderModal';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-content backup-reminder-content">
+      <div class="modal-header">
+        <h4>🔄 تذكير النسخ الاحتياطي</h4>
+        <button onclick="closeBackupReminder()" class="close-btn">✖</button>
+      </div>
+      <div class="modal-body">
+        <p>مرحباً! لم تقم بأخذ نسخة احتياطية منذ ${Math.floor(daysSinceLastBackup)} يوم/أيام.</p>
+        <p>يُنصح بأخذ نسخة احتياطية دورية لحفظ ملاحظاتك.</p>
+        <div class="backup-actions">
+          <button onclick="exportNotes(); closeBackupReminder();" class="backup-now-btn">📤 احتياطي الآن</button>
+          <button onclick="snoozeBackupReminder()" class="snooze-btn">⏰ تذكير لاحقاً</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// وظيفة إغلاق تنبيه النسخ الاحتياطي
+function closeBackupReminder() {
+  const modal = document.getElementById('backupReminderModal');
+  if (modal) {
+    modal.remove();
+  }
+}
+
+// وظيفة تأجيل التذكير لمدة 3 أيام
+function snoozeBackupReminder() {
+  const snoozeUntil = new Date();
+  snoozeUntil.setDate(snoozeUntil.getDate() + backupSnoozeDays);
+  safeLocalStorageSet('backupSnoozedUntil', snoozeUntil.toISOString());
+  closeBackupReminder();
+  showToast(`تم تأجيل التذكير لمدة ${backupSnoozeDays} أيام ⏰`);
+}
+
+// وظيفة تحديث تاريخ آخر نسخ احتياطي
+function updateLastBackupDate() {
+  const now = new Date().toISOString();
+  safeLocalStorageSet('lastBackupDate', now);
+  // إزالة التأجيل عند أخذ نسخة احتياطية
+  safeLocalStorageRemove('backupSnoozedUntil');
+}
+
+// دالة آمنة لحذف من localStorage
+function safeLocalStorageRemove(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.warn(`فشل في حذف ${key} من localStorage:`, e);
+  }
+}
+
+// تعديل دالة التصدير لتحديث تاريخ النسخ الاحتياطي
+function exportNotes() {
+  const data = {
+    notes: notes,
+    tabNames: tabNames
+  };
+
+  // 🕒 توليد التاريخ بصيغة YYYY-MM-DD
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const dateString = `${yyyy}-${mm}-${dd}`;
+
+  // 📁 اسم الملف مع التاريخ
+  const filename = `clip-note_backup_${dateString}.json`;
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // تحديث تاريخ آخر نسخ احتياطي
+  updateLastBackupDate();
+  showToast("تم التصدير وتحديث تاريخ النسخ الاحتياطي ✅");
+}
+
 // 🚀 تشغيل التهيئة عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", () => {
   try {
@@ -1446,6 +1623,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // إضافة مستمع لتحديث تنسيق الصور عند تغيير حجم النافذة
     window.addEventListener('resize', updateImageStyles);
+
+    // التحقق من تذكير النسخ الاحتياطي بعد تحميل الصفحة
+    setTimeout(checkBackupReminder, 2000); // تأخير 2 ثانية لضمان تحميل كل شيء
   } catch (err) {
     alert('حدث خطأ في جافاسكريبت:\n' + err.message);
     console.error(err);
@@ -1487,7 +1667,7 @@ function translateText() {
 
   // عرض النص الأصلي أولاً
   document.getElementById("originalText").value = text;
-  document.getElementById("originalText").style.direction = currentSourceLang === 'ar' ? 'rtl' : 'ltr';
+  updateTextDirectionAndFont(document.getElementById("originalText"));
   document.getElementById("translatedText").value = '';
 
   // تعيين اللغات في القوائم المنسدلة
@@ -1533,7 +1713,7 @@ function performTranslation(text, sourceLang, targetLang) {
         const translatedElement = document.getElementById("translatedText");
         if (translatedElement) {
           translatedElement.value = translatedText;
-          translatedElement.style.direction = targetLang === 'ar' ? 'rtl' : 'ltr';
+          updateTextDirectionAndFont(translatedElement);
         }
 
         resolve(translatedText);
@@ -1566,9 +1746,9 @@ function swapLanguages() {
   document.getElementById("originalText").value = translatedText;
   document.getElementById("translatedText").value = originalText;
 
-  // تحديث اتجاه النص
-  document.getElementById("originalText").style.direction = currentSourceLang === 'ar' ? 'rtl' : 'ltr';
-  document.getElementById("translatedText").style.direction = currentTargetLang === 'ar' ? 'rtl' : 'ltr';
+  // تحديث اتجاه النص وتنسيق الخط حسب المحتوى الجديد
+  updateTextDirectionAndFont(document.getElementById("originalText"));
+  updateTextDirectionAndFont(document.getElementById("translatedText"));
 
   // تحديث القوائم المنسدلة
   document.getElementById("sourceLangSelect").value = currentSourceLang;
@@ -1857,6 +2037,78 @@ function updateImagePositionsInNotes() {
   }
 }
 
+// وظيفة حفظ التعديل من نافذة الترجمة
+function saveTranslationEdit() {
+  try {
+    // الحصول على النص المترجم من نافذة الترجمة
+    const translatedText = document.getElementById("translatedText").value.trim();
+
+    if (!translatedText) {
+      showToast('❌ لا يوجد نص مترجم لحفظه');
+      return;
+    }
+
+    // الحصول على النص الأصلي من نافذة الترجمة
+    const originalText = document.getElementById("originalText").value.trim();
+
+    // حفظ النص المترجم في نافذة التحرير
+    const editTextarea = document.getElementById("editTextarea");
+    if (editTextarea) {
+      editTextarea.textContent = translatedText;
+      // تطبيق التنسيق التلقائي
+      autoFormatTextDirection(editTextarea);
+    }
+
+    // إغلاق نافذة الترجمة
+    closeTranslateModal();
+
+    showToast('✅ تم حفظ النص المترجم في نافذة التحرير');
+  } catch (error) {
+    console.error('خطأ في حفظ التعديل من نافذة الترجمة:', error);
+    showToast('❌ خطأ في حفظ التعديل');
+  }
+}
+
+// وظيفة تحديث اتجاه النص وتنسيق الخط حسب المحتوى
+function updateTextDirectionAndFont(textarea) {
+  const text = textarea.value || textarea.innerText || '';
+  if (!text.trim()) {
+    // إذا كان النص فارغاً، استخدم الاتجاه الافتراضي حسب اللغة المحددة
+    const isOriginal = textarea.id === 'originalText';
+    const lang = isOriginal ? currentSourceLang : currentTargetLang;
+    textarea.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+    textarea.style.textAlign = lang === 'ar' ? 'right' : 'left';
+    textarea.style.fontFamily = lang === 'ar' ? '"Segoe UI", Tahoma, sans-serif' : '"Segoe UI", Tahoma, sans-serif';
+    return;
+  }
+
+  // كشف اللغة من المحتوى
+  const arabicChars = /[\u0600-\u06FF]/g;
+  const englishChars = /[a-zA-Z]/g;
+
+  const arabicCount = (text.match(arabicChars) || []).length;
+  const englishCount = (text.match(englishChars) || []).length;
+
+  if (arabicCount > englishCount) {
+    // النص عربي بشكل أساسي
+    textarea.style.direction = 'rtl';
+    textarea.style.textAlign = 'right';
+    textarea.style.fontFamily = '"Segoe UI", Tahoma, sans-serif';
+  } else if (englishCount > arabicCount) {
+    // النص إنجليزي بشكل أساسي
+    textarea.style.direction = 'ltr';
+    textarea.style.textAlign = 'left';
+    textarea.style.fontFamily = '"Segoe UI", Tahoma, sans-serif';
+  } else {
+    // نص مختلط أو غير محدد - استخدم الاتجاه الافتراضي
+    const isOriginal = textarea.id === 'originalText';
+    const lang = isOriginal ? currentSourceLang : currentTargetLang;
+    textarea.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+    textarea.style.textAlign = lang === 'ar' ? 'right' : 'left';
+    textarea.style.fontFamily = '"Segoe UI", Tahoma, sans-serif';
+  }
+}
+
 // إضافة مستمعي الأحداث للترجمة الفورية
 function setupTranslationListeners() {
   const originalText = document.getElementById("originalText");
@@ -1867,7 +2119,7 @@ function setupTranslationListeners() {
   // مستمع لتغيير لغة المصدر
   sourceLangSelect.addEventListener('change', function() {
     currentSourceLang = this.value;
-    document.getElementById("originalText").style.direction = currentSourceLang === 'ar' ? 'rtl' : 'ltr';
+    updateTextDirectionAndFont(originalText);
     // إعادة الترجمة إذا كان هناك نص
     const text = originalText.value.trim();
     if (text) {
@@ -1884,7 +2136,7 @@ function setupTranslationListeners() {
   // مستمع لتغيير لغة الهدف
   targetLangSelect.addEventListener('change', function() {
     currentTargetLang = this.value;
-    document.getElementById("translatedText").style.direction = currentTargetLang === 'ar' ? 'rtl' : 'ltr';
+    updateTextDirectionAndFont(translatedText);
     // إعادة الترجمة إذا كان هناك نص
     const text = originalText.value.trim();
     if (text) {
@@ -1900,6 +2152,9 @@ function setupTranslationListeners() {
 
   // ترجمة فورية عند الكتابة في النص الأصلي مع تأخير
   originalText.addEventListener('input', function() {
+    // تحديث تنسيق النص عند الكتابة
+    updateTextDirectionAndFont(this);
+
     clearTimeout(translationTimeout);
     const text = this.value.trim();
 
@@ -1917,6 +2172,9 @@ function setupTranslationListeners() {
 
   // ترجمة فورية عند الكتابة في النص المترجم مع تأخير
   translatedText.addEventListener('input', function() {
+    // تحديث تنسيق النص عند الكتابة
+    updateTextDirectionAndFont(this);
+
     clearTimeout(translationTimeout);
     const text = this.value.trim();
 
@@ -1947,8 +2205,10 @@ function setupTranslationListeners() {
   });
 }
 
-// وظيفة جعل الصور قابلة للسحب والإفلات مع تحسينات
+// وظيفة جعل الصور قابلة للسحب والإفلات مع تحسينات (معطلة)
 function makeImagesDraggable() {
+  // تم تعطيل هذه الوظيفة - الصور لم تعد قابلة للسحب والإفلات
+  return;
   const editTextarea = document.getElementById("editTextarea");
   if (!editTextarea) return;
 
@@ -2268,5 +2528,265 @@ function makeImagesDraggable() {
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") {
     closeEditModal();
+    closeTabOrderModal();
   }
 });
+
+// متغيرات لترتيب التبويبات
+let tabOrder = [];
+
+// دالة فتح نافذة ترتيب التبويبات
+function openTabOrderModal() {
+  // إنشاء النافذة إذا لم تكن موجودة
+  let modal = document.getElementById('tabOrderModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'tabOrderModal';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>🔀 ترتيب لوحات</h4>
+          <button onclick="closeTabOrderModal()" class="close-btn">✖</button>
+        </div>
+        <div class="modal-body">
+          <div id="tabOrderList" class="tab-order-list"></div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="saveTabOrder()" class="save-btn">💾 حفظ الترتيب</button>
+          <button onclick="closeTabOrderModal()" class="cancel-btn">إلغاء</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  // تحميل الترتيب الحالي
+  loadTabOrder();
+
+  // عرض النافذة
+  modal.classList.remove('hidden');
+}
+
+// دالة إغلاق نافذة ترتيب التبويبات
+function closeTabOrderModal() {
+  const modal = document.getElementById('tabOrderModal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+// دالة تحميل ترتيب التبويبات
+function loadTabOrder() {
+  // الحصول على الترتيب المحفوظ أو الافتراضي
+  const savedOrder = safeLocalStorageGet('tabOrder', null);
+  if (savedOrder && Array.isArray(savedOrder)) {
+    tabOrder = savedOrder;
+  } else {
+    // الترتيب الافتراضي: الرئيسية أولاً ثم باقي التبويبات مرتبة أبجدياً
+    const normalTabs = Object.keys(tabNames).filter(id => id !== 'settings' && id !== 'trash' && id !== 'home');
+    normalTabs.sort();
+    tabOrder = ['home', ...normalTabs];
+  }
+
+  renderTabOrderList();
+}
+
+// دالة عرض قائمة التبويبات القابلة للترتيب
+function renderTabOrderList() {
+  const listContainer = document.getElementById('tabOrderList');
+  if (!listContainer) return;
+
+  listContainer.innerHTML = '';
+
+  tabOrder.forEach((tabId, index) => {
+    if (tabNames[tabId] && tabId !== 'settings' && tabId !== 'trash') {
+      const tabItem = document.createElement('div');
+      tabItem.className = 'tab-order-item';
+      tabItem.draggable = true;
+      tabItem.dataset.tabId = tabId;
+      tabItem.innerHTML = `
+        <button class="move-up-btn" onclick="moveTabUp('${tabId}')">▲</button>
+        <span class="tab-name">${tabNames[tabId]}</span>
+        <button class="move-down-btn" onclick="moveTabDown('${tabId}')">▼</button>
+        <span class="tab-position">${index + 1}</span>
+      `;
+
+      listContainer.appendChild(tabItem);
+    }
+  });
+}
+
+// متغيات لإدارة السحب والإفلات
+let draggedElement = null;
+let placeholder = null;
+let touchStartY = 0;
+let touchStartX = 0;
+
+// دوال السحب والإفلات للديسكتوب
+function handleDragStart(e) {
+  draggedElement = e.target;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', e.target.outerHTML);
+  e.target.classList.add('dragging');
+}
+
+function handleDragEnd(e) {
+  e.target.classList.remove('dragging');
+  if (placeholder) {
+    placeholder.remove();
+    placeholder = null;
+  }
+  draggedElement = null;
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+
+  const target = e.target.closest('.tab-order-item');
+  if (!target || target === draggedElement) return;
+
+  const rect = target.getBoundingClientRect();
+  const midpoint = rect.top + rect.height / 2;
+
+  // إزالة placeholder القديم إذا وجد
+  if (placeholder) {
+    placeholder.remove();
+  }
+
+  // إنشاء placeholder جديد
+  placeholder = document.createElement('div');
+  placeholder.className = 'tab-order-placeholder';
+  placeholder.style.height = '4px';
+  placeholder.style.background = '#007bff';
+  placeholder.style.borderRadius = '2px';
+  placeholder.style.margin = '2px 0';
+  placeholder.style.transition = 'all 0.2s ease';
+
+  // تحديد الموقع بناءً على النقطة الوسطى
+  if (e.clientY < midpoint) {
+    // فوق العنصر المستهدف
+    target.parentNode.insertBefore(placeholder, target);
+  } else {
+    // تحت العنصر المستهدف
+    target.parentNode.insertBefore(placeholder, target.nextSibling);
+  }
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+
+  if (!draggedElement || !placeholder) return;
+
+  const draggedTabId = draggedElement.dataset.tabId;
+  const placeholderIndex = Array.from(placeholder.parentNode.children).indexOf(placeholder);
+
+  // إزالة العنصر المسحوب من موقعه القديم
+  const oldIndex = tabOrder.indexOf(draggedTabId);
+  if (oldIndex > -1) {
+    tabOrder.splice(oldIndex, 1);
+  }
+
+  // إدراج العنصر في الموقع الجديد (قبل أو بعد العنصر المستهدف)
+  tabOrder.splice(placeholderIndex, 0, draggedTabId);
+
+  // إعادة عرض القائمة
+  renderTabOrderList();
+}
+
+// دوال السحب والإفلات للجوال (لمس)
+function handleTouchStart(e) {
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  draggedElement = e.target.closest('.tab-order-item');
+
+  if (draggedElement) {
+    draggedElement.classList.add('dragging');
+  }
+}
+
+function handleTouchMove(e) {
+  if (!draggedElement) return;
+
+  e.preventDefault();
+
+  const touch = e.touches[0];
+  const deltaX = Math.abs(touch.clientX - touchStartX);
+  const deltaY = Math.abs(touch.clientY - touchStartY);
+
+  // ابدأ السحب بعد حركة معينة
+  if (deltaY > 10 || deltaX > 10) {
+    draggedElement.style.position = 'fixed';
+    draggedElement.style.left = touch.clientX - 50 + 'px';
+    draggedElement.style.top = touch.clientY - 20 + 'px';
+    draggedElement.style.zIndex = '1000';
+    draggedElement.style.opacity = '0.8';
+  }
+}
+
+function handleTouchEnd(e) {
+  if (!draggedElement) return;
+
+  const touch = e.changedTouches[0];
+  draggedElement.style.position = '';
+  draggedElement.style.left = '';
+  draggedElement.style.top = '';
+  draggedElement.style.zIndex = '';
+  draggedElement.style.opacity = '';
+
+  // العثور على العنصر المستهدف
+  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+  const targetItem = targetElement ? targetElement.closest('.tab-order-item') : null;
+
+  if (targetItem && targetItem !== draggedElement) {
+    const draggedTabId = draggedElement.dataset.tabId;
+    const targetTabId = targetItem.dataset.tabId;
+
+    // تبديل المواقع
+    const draggedIndex = tabOrder.indexOf(draggedTabId);
+    const targetIndex = tabOrder.indexOf(targetTabId);
+
+    if (draggedIndex > -1 && targetIndex > -1) {
+      [tabOrder[draggedIndex], tabOrder[targetIndex]] = [tabOrder[targetIndex], tabOrder[draggedIndex]];
+      renderTabOrderList();
+    }
+  }
+
+  draggedElement.classList.remove('dragging');
+  draggedElement = null;
+}
+
+// دوال تحريك التبويبات لأعلى ولأسفل
+function moveTabUp(tabId) {
+  const currentIndex = tabOrder.indexOf(tabId);
+  if (currentIndex > 0) {
+    // تبديل مع العنصر السابق
+    [tabOrder[currentIndex], tabOrder[currentIndex - 1]] = [tabOrder[currentIndex - 1], tabOrder[currentIndex]];
+    renderTabOrderList();
+  }
+}
+
+function moveTabDown(tabId) {
+  const currentIndex = tabOrder.indexOf(tabId);
+  if (currentIndex < tabOrder.length - 1) {
+    // تبديل مع العنصر التالي
+    [tabOrder[currentIndex], tabOrder[currentIndex + 1]] = [tabOrder[currentIndex + 1], tabOrder[currentIndex]];
+    renderTabOrderList();
+  }
+}
+
+// دالة حفظ ترتيب التبويبات
+function saveTabOrder() {
+  // حفظ الترتيب في localStorage
+  safeLocalStorageSet('tabOrder', tabOrder);
+
+  // تحديث عرض التبويبات
+  renderTabs();
+
+  // إغلاق النافذة
+  closeTabOrderModal();
+
+  showToast('✅ تم حفظ ترتيب االلوحات');
+}
